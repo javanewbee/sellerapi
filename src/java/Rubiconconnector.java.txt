@@ -1,0 +1,376 @@
+package RubiconConnector.rubicon.api;
+
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+//import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Date;
+import java.util.Map;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import java.text.DateFormat;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import sun.misc.BASE64Encoder;
+import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.auth.BasicScheme;
+import org.apache.commons.httpclient.methods.*;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+
+import org.apache.commons.httpclient.methods.GetMethod;
+
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+
+
+
+
+public class RubiconConnector {
+
+	/** Global instance of the HTTP transport. */
+	
+	
+	private static final String APIKEY="ABCD";
+
+
+	private static final String CLIENT_SECRET = "1234";
+	private static final String httpsURL = "https://api.rubiconproject.com";
+	private static String perfreportstr = "/seller/api/reports/v1/11440/?columns=Site_Name,Traffic_Impressions,Prorated_ECPM&source=standard,&currency=USD";
+	
+	
+	/** Date format. */
+	private static final String dateFormat_yyyy_MM_dd = "yyyy-MM-dd";
+
+	/** eBay Account IDs we are interested in. */
+	private static final String eBayAccountID = "11440";
+
+	/** Authorizes the installed application to access user's protected data. */
+	public class HttpMessage extends java.lang.Object {};
+	
+	private static HttpsURLConnection getHttpConnection(String url) 
+			throws IOException, KeyManagementException, NoSuchAlgorithmException, KeyManagementException, MalformedURLException, IOException
+	{
+		URL myurl = new URL(url);
+	    
+		
+		String geturl= httpsURL+perfreportstr;
+		
+		HttpClient client = new DefaultHttpClient();
+		HttpGet request = new HttpGet(geturl);
+		request.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+		client.execute(request);
+		
+		 
+		URL obj = new URL(geturl);
+		HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+ 
+		// optional default is GET
+		con.setRequestMethod("GET");
+ 
+		//add request header
+		con.setRequestProperty("User-Agent", "Mozilaa");
+ 
+		int responseCode = con.getResponseCode();
+		System.out.println("\nSending 'GET' request to URL : " + url);
+		System.out.println("Response Code : " + responseCode);
+		
+		
+		
+		HttpsURLConnection connection = (HttpsURLConnection) myurl.openConnection();
+		connection.setRequestMethod("GET");
+		connection.setDoInput(true);
+		connection.addRequestProperty( "Authorization","Basic" + "NGMzNjRkNDZkMjVmN2ViYzgzODQ5OWJhYjcxMzZlYTI1OTdlMWFjNzo4OTMzZDViYzZjYjI4OGUzNDA5MTM3ZTRkZGZhZjcwYQ==" );
+		
+		   
+	    
+	    System.out.println("\nResp Code:" + connection.getResponseCode());
+	    
+
+		
+			
+		return connection;
+	}
+	
+	
+	
+	public static ArrayList<String> SetDimension () throws Exception {
+		
+		
+		 String[] arr = new String[4];
+		    arr[0] = "date";
+		    arr[1] = "ad_size";
+		    arr[2] = "site";
+		    arr[3] = "zone";
+		    arr[4] = "country";
+		    arr[5] = "keyword";
+		    arr[6] = "campaign";
+		    arr[7] = "campaign_relationship";
+		    arr[8] = "partner";
+		    arr[9] = "agency";
+		    		    
+		    
+		    List<String> newList = Arrays.asList(arr);
+		    
+		   
+		    
+		    
+		    ArrayList<String> setDim = new ArrayList<String>();
+
+		    setDim.addAll(newList); 
+			return setDim;
+					//Arrays.asList("DATE", "AD_CLIENT_ID","CUSTOM_CHANNEL_NAME");
+		
+		
+	}
+	
+	
+	
+	
+	private static void Writereport( String startDate, String endDate, String fileName) throws NoSuchAlgorithmException, KeyManagementException, MalformedURLException, IOException
+{		
+String report = null;
+StringBuilder sbReport = new StringBuilder();
+
+//sbReport.append(queryParam).append("&startDate=").append(startDate).append("&endDate=").append(endDate);
+
+//report = sbReport.toString();
+
+
+
+
+
+String reportUrl = null;
+
+
+reportUrl = httpsURL + perfreportstr ;
+//+ FORMAT_EXTANCTION;		
+
+
+	
+HttpsURLConnection conn = getHttpConnection(reportUrl);
+
+//conn.addRequestProperty("APIKEY",APIKEY);
+//conn.addRequestProperty("API_SECRET", CLIENT_SECRET);
+//conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14");
+System.out.println("\nResp Code:" + conn.getResponseCode());
+
+System.out.println("\nReading data... " );
+
+// Read the server response.
+
+Writer writer = null;
+
+try
+{
+BufferedReader rd  = null;
+String line = null;
+
+StringBuilder sb = new StringBuilder();
+rd  = new BufferedReader(new InputStreamReader(conn.getInputStream()));				
+
+while ((line = rd.readLine()) != null)
+{
+sb.append(line);					
+}
+
+writer = new BufferedWriter(new OutputStreamWriter(
+new FileOutputStream(fileName)));
+
+writer.write(sb.toString());
+
+//processXmlFileToCsv(fileName);	
+
+}
+catch(Exception e)
+{
+System.out.println("\nException reading data from Rubicon" );
+e.printStackTrace();
+}
+finally 
+{
+try {writer.close();} catch (Exception ex) {};
+}
+
+}
+	
+	public static Date addDays(Date d, int days)
+  {
+      d.setTime(d.getTime() + days * 1000 * 60 * 60 * 24);
+      return d;
+  }
+	/**
+	 * Runs all the AdSense Management API samples.
+	 *
+	 * @param args
+	 *            command-line arguments.
+	 */
+	
+	private static SSLContext getSSLContext() throws NoSuchAlgorithmException, KeyManagementException
+	{
+		X509TrustManager tm = new X509TrustManager() 
+		{
+			public X509Certificate[] getAcceptedIssuers()
+			{
+				return null;
+			}
+
+			public void checkServerTrusted(X509Certificate[] paramArrayOfX509Certificate, String paramString) throws CertificateException
+			{
+
+			}
+
+			public void checkClientTrusted(X509Certificate[] paramArrayOfX509Certificate, String paramString) throws CertificateException
+			{
+			}
+		};
+
+		SSLContext ctx = SSLContext.getInstance("TLS");
+		ctx.init(null, new TrustManager[] { tm }, null);
+
+		return ctx;
+	}
+	
+	//public static void main(String[] args) {
+	public static void main(String[] args) {
+		try {
+			Date startDate = null;
+			Date endDate = null;
+			// String fileLocation = "/export/home/dw_dc/";
+			//String fileLocation = "C:\\GoogleAdsense\\";
+			String fileLocation = "/export/home/dw_dev/Advertising";
+			//String fileLocation ="/export/home/dw_ops/Advertising";
+			int isChannel=1; 
+			// String fileLocation = "D:\\GoogleApi\\";
+			SimpleDateFormat dateFormat = new SimpleDateFormat(
+					dateFormat_yyyy_MM_dd);
+
+			try {
+				if (args.length >= 3) {
+
+					if (args[0] != null) {
+						startDate = dateFormat.parse(args[0]);
+
+					}
+
+					if (args[1] != null) {
+						endDate = dateFormat.parse(args[1]);
+
+					}
+
+					if (args.length == 3 && args[2] != null) {
+						fileLocation = args[2];
+					}
+					
+					if (args[3] != null) {
+							
+							isChannel = Integer.parseInt(args[3]);
+						 
+					}
+					
+					
+					
+				} else {
+					Calendar today = Calendar.getInstance();
+					today.add(Calendar.DATE, -1);
+					endDate = today.getTime();
+					
+					Calendar endCal = Calendar.getInstance();
+					endCal.add(Calendar.DATE, -90);
+					
+					startDate = endCal.getTime();;
+				}
+
+				String sStartDate = dateFormat.format(startDate);
+				String sEndDate = dateFormat.format(endDate);
+				
+				String date = sStartDate;
+				date = date.replace("-", "");
+				String filename;
+				
+				
+				filename="Rubicon-Report_";
+				String file =  filename + date
+						+ ".csv";
+
+				// String file = fileLocation + "AdSense-Report.csv";
+
+				// Create file
+				FileWriter fstream = new FileWriter(file);
+				BufferedWriter out = new BufferedWriter(fstream);
+			    
+				
+				
+			  
+			     
+//			     Writereport(sStartDate,sEndDate,out);
+				 Writereport(sStartDate,sEndDate,file);
+			     
+			    
+			    	  
+			    				
+				System.out.println("File written at " + file);
+				out.close();
+			//	AdSense adsense = initializeAdsense();
+				//ArrayList<String> param=SetDimension(isChannel);
+				/*
+				 * HttpResponse accountsHttpResponse =
+				 * adsense.accounts().list().executeUnparsed();
+				 * System.out.println(accountsHttpResponse.parseAsString());
+				 */
+			     
+			} catch (IOException e) {
+				System.err.println(e.getMessage());
+				throw e;
+			}
+		} catch (Throwable t) {
+			System.err.println(t.getMessage());
+			t.printStackTrace();
+			throw new RuntimeException(t);
+			
+		}
+	}
+}
+				
